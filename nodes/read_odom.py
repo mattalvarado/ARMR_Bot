@@ -4,6 +4,15 @@
 #This is a hardcoded way to parse flattned Odometry byte strings sent from the cRIO
 #This code can be used as a template for how to parse the Odometry byte strings
 
+#Note when 4 bytes are skipped when indexing the data bytestring that represents
+# a I32 corresponding to the size of the string or array. I chose to ignore it
+# since I know the Odometry server on the ARMR_Bot's cRIO will transmit Odometry messages
+# in a predetermined fashion
+
+#This package depends on Twisted, an Event Based python networking library.
+#I have implemented a reconnecting client which keeps on trying to reconnect
+#to the cRIO Odometry server on the cRIO.
+
 
 import roslib; roslib.load_manifest('ARMR_Bot')
 import rospy
