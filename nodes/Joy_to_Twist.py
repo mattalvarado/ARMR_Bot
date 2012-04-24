@@ -5,6 +5,9 @@
 #Upper left Joystick if for driving
 #B is for E-Stop
 
+#This node subscribes to Joy messages from the Joy node and
+#converts and publishes them to Twist messages
+
 import roslib; roslib.load_manifest('ARMR_Bot')
 import rospy
 from math import exp
