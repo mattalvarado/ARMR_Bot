@@ -61,7 +61,8 @@ class Odom(Protocol):
 		#calculate them. We are not properly sending the correct covarinace
 		#maxtrix. Ours is 3x3 where it should be 6x6. To skip the covaraince
 		#we will skip 4+ (9*8) = 76 bytes
-		#odom_msg.pose.covariance = [float64(0)]*36		
+		
+				
 
 		#Unpack Twist
 		twist = self.bytestr_to_array(data[165:213])
@@ -78,7 +79,6 @@ class Odom(Protocol):
 		#maxtrix. Ours is 3x3 where it should be 6x6. To skip the covaraince
 		#we will skip 4+ (9*8) = 76 bytes
 
-		#odom_msg.twist.covariance = [float64(0)]*36
 
 		return odom_msg
 	
