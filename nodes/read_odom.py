@@ -134,6 +134,6 @@ class OdomClientFactory(ReconnectingClientFactory):
 
  
 #IP address of ARL ARMR Bot cRIO: 192.168.1.5
-#port where Odometry data is streaming from : 4568
+#port where Odometry data is streaming from : 4571
 reactor.connectTCP('192.168.1.5', 4571, OdomClientFactory())
 reactor.run()
