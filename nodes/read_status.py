@@ -5,7 +5,14 @@
 #This is a hardcoded way to parse flattened Status messages byte strings sent from the cRIO
 #This code can be used as a template for how to parse the Status message byte strings
 
+#The staus message contains the 4 system voltages; 5V, 12V, Battery Voltage, and 48V
+#as well as 4 system temperatures and the cRIO temperature
+
 #The status message populated is defined customly (status.msg) in the package where this node exists
+
+#This package depends on Twisted, an Event Based python networking library.
+#I have implemented a reconnecting client which keeps on trying to reconnect
+#to the cRIO Status server on the cRIO.
 
 import roslib; roslib.load_manifest('ARMR_Bot')
 import rospy
