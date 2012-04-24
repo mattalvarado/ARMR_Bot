@@ -1,0 +1,30 @@
+<package>
+  <description brief="ARMR_Bot">
+
+     This is code which connects to the ARL ARMR Bot developed
+     by the Olin College ARL SCOPE Team. This code is not optimized
+     or intended to be production ready. This is intended to be a 
+     proof of concept for interfacing the NI 9076 cRIO with ROS.
+
+     The communications are based around TCP and all nodes are written in 
+     Python. 
+
+  </description>
+  <author>Matthew Alvarado</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/labview_test</url>
+  <depend package="std_msgs"/>
+  <depend package="rospy"/>
+  <depend package="roscpp"/>
+  <depend package="geometry_msgs"/>
+  <depend package="joy"/>
+  <depend package="sensor_msgs"/>
+  <depend package="nav_msgs"/>
+
+  <rosdep name="python-numpy"/>
+  <rosdep name="python"/>
+
+</package>
+
+

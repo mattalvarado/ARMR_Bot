@@ -1,0 +1,12 @@
+<launch>
+  <node pkg="ARMR_Bot" name="twist_writer" type="send_twist_to_rio.py" />
+
+  <node pkg="joy" name="joy_node" type="joy_node">
+    <param name="/dev" value="/dev/input/js0" />
+    <param name="deadzone" value="0.1" />
+  </node>
+
+  <node pkg="ARMR_Bot" name="joy_to_twist" type="Joy_to_Twist.py" />
+</launch>
+	
+	       
