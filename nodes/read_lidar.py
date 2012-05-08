@@ -79,9 +79,9 @@ class LIDAR(Protocol):
 		#This is written for the frame_id = 'laser'
 		head = Header()
 		unpk = unpack('!IIxxxxcccccI', data)
-		now  = rospy.Time.now()
-		head.stamp.secs = int(now.to_sec())
-		head.stamp.nsecs = int(now.to_nsec())
+		now = rospy.get_rostime()
+		head.stamp.secs = int(now.secs)
+		head.stamp.nsecs = int(now.nsecs)
 		head.frame_id = unpk[2] + unpk[3] + unpk[4] + unpk[5] + unpk[6]
 		head.seq = unpk[7]
 		return head

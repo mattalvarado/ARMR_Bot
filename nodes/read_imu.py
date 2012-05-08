@@ -25,13 +25,24 @@ from numpy import *
 from sensor_msgs.msg import Imu
 from std_msgs.msg import Header
 
+#Global used to controll when rate I32 is sent to cRIO
+#I apologize for the inelegance
+firstrun = True
 
 
 class IMU(Protocol):
 	
 	def __init__(self):
-		self.imu_pub = rospy.Publisher("imu",Imu)
+		self.imu_pub = rospy.Publisher("imu_data",Imu)
 		self.partial_msg = ''
+		
+	
+	def connectionMade(self):
+		global firstrun	
+		if (firstrun):		
+			#send the rate which you would like to stream data at
+			self.transport.write(pack('!I',40))	
+			firstrun = False
 
 	def dataReceived(self, data):
 		imu = self.decodeMessage(data)    
@@ -83,10 +94,10 @@ class IMU(Protocol):
 		#This is written for the frame_id = 'imu'
 		head = Header()
 		unpk = unpack('!IIxxxxcccI', data)
-		now  = rospy.Time.now()
-		head.stamp.secs = int(now.to_sec())
-		head.stamp.nsecs = int(now.to_nsec())
-		head.frame_id = unpk[2] + unpk[3] + unpk[4]
+		now = rospy.get_rostime()
+		head.stamp.secs = int(now.secs)
+		head.stamp.nsecs = int(now.nsecs)
+		head.frame_id = unpk[2] + unpk[3] + unpk[4]		
 		head.seq = unpk[5]
 		return head
 
@@ -117,6 +128,8 @@ class IMUClientFactory(ReconnectingClientFactory):
    	def clientConnectionLost(self, connector, reason):
 		print "Lost connection. Reason:", reason
 		ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
+		global firstrun
+		firstrun = True
 
 	def clientConnectionFailed(self, connector, reason):
 		print "Connection failed. Reason:", reason
@@ -128,6 +141,7 @@ class IMUClientFactory(ReconnectingClientFactory):
  
 #IP address of ARL ARMR Bot cRIO: 192.168.1.5
 #port where IMU data is streaming from : 4569
+
 reactor.connectTCP('192.168.1.5', 4569, IMUClientFactory())
 reactor.run()
  

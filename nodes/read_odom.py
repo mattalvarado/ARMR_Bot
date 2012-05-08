@@ -27,6 +27,16 @@ from nav_msgs.msg import Odometry
 from std_msgs.msg import Header
 
 
+#A dummy covariance for robot_pose_ekf
+covariance = [1e-3, 0.0, 0.0, 0.0, 0.0, 0.0,
+		0.0, 1e-3, 0.0, 0.0, 0.0, 0.0,
+		0.0, 0.0 , 1e6, 0.0 ,0.0 ,0.0,
+		0.0, 0.0, 0.0, 1e6, 0.0 ,0.0,
+		0.0 ,0.0, 0.0, 0.0, 1e6, 0.0,
+		0.0 ,0.0 ,0.0 ,0.0, 0.0, 1e3]
+
+
+
 class Odom(Protocol):
 	
 	def __init__(self):
@@ -55,7 +65,10 @@ class Odom(Protocol):
 		odom_msg.header = self.unpackOdomHeader(data[0:20])
 		#Unpack Child_frame_id
 		#Is constant and "base_link"
-		odom_msg.child_frame_id = unpack('xxxxccccccccc', data[20:33])[0]
+		cfid = unpack('xxxxccccccccc', data[20:33])
+		#odom_msg.child_frame_id = (cfid[0] + cfid[1] + cfid[2] + 
+		#cfid[3] + cfid[4] + cfid[5] + cfid[6] + cfid[7] + cfid[8])
+		odom_msg.child_frame_id = 'base_footprint'
 		#Unpack Pose
 		pose = self.bytestr_to_array(data[33:89])
 		odom_msg.pose.pose.position.x = pose[0]
@@ -71,6 +84,7 @@ class Odom(Protocol):
 		#maxtrix. Ours is 3x3 where it should be 6x6. To skip the covaraince
 		#we will skip 4+ (9*8) = 76 bytes
 		
+		odom_msg.pose.covariance = covariance
 				
 
 		#Unpack Twist
@@ -87,8 +101,9 @@ class Odom(Protocol):
 		#calculate them. We are not properly sending the correct covarinace
 		#maxtrix. Ours is 3x3 where it should be 6x6. To skip the covaraince
 		#we will skip 4+ (9*8) = 76 bytes
-
-
+		
+		odom_msg.twist.covariance = covariance
+		
 		return odom_msg
 	
 	
@@ -97,9 +112,9 @@ class Odom(Protocol):
 		#This is written for the frame_id = 'odom'
 		head = Header()
 		unpk = unpack('!IIxxxxccccI', data)
-		now  = rospy.Time.now()
-		head.stamp.secs = int(now.to_sec())
-		head.stamp.nsecs = int(now.to_nsec())
+		now = rospy.get_rostime()
+		head.stamp.secs = int(now.secs)
+		head.stamp.nsecs = int(now.nsecs)
 		head.frame_id = unpk[2] + unpk[3] + unpk[4] + unpk[5]
 		head.seq = unpk[6]
 		return head
